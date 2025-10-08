@@ -1,43 +1,39 @@
 import RPi.GPIO as GPIO
+# import time
 
-dac_pins = [16, 20, 21, 25, 26, 17, 27, 22]
-# setting up these pins as output
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(dac_pins, GPIO.OUT)
+pins=[16,20,21,25,26,17,27,22]
+GPIO.setup(pins,GPIO.OUT)
+DR=3.15 #динамический диапазон
 
-dac_voltage_range = 3.3
-def voltage_to_number(voltage):
-    if not (0.0 <= voltage <= dac_voltage_range):
-        print(f"")
-GPIO.setup([9, 10], GPIO.IN)
-sleep_time = 0.2
-up = 9
-down = 10
+def VoltageToNumber(voltage):
+    if not(0.0<= voltage <= DR):
+        print(f"напряжение выходит за динамический диапазон ЦАП (0.00 - {DR:.2f} B)")
+        print("устанавливаем 0.0 B")
+        return 0
+    print(int(voltage/DR *255))
+    return int((voltage / DR)*255)
 
-GPIO.output(leds, 0)
+def NumberToDac(num):
+    num_bin=[int(e) for e in bin(num)[2:].zfill(8)]
+    for i in range(8):
+        GPIO.output(pins[i],int(num_bin[i]))
+    print(num_bin)
 
-num = 0
+    return 1
 
-while True:
-    if GPIO.input(up) > 0 and GPIO.input(down) > 0:
-            num = 255
-            print(num, dec2bin(num))
-            time.sleep(sleep_time)
-            for i in range(8):
-                GPIO.output(leds[i], dec2bin(num)[i])
-    if GPIO.input(up) > 0:
-        if num < 255:
-            num += 1
-            print(num, dec2bin(num))
-            time.sleep(sleep_time)
-        for i in range(8):
-            GPIO.output(leds[i], dec2bin(num)[i])
-    if GPIO.input(down) > 0:
-        if num > 0:
-            num -= 1
-            print(num, dec2bin(num))
-            time.sleep(sleep_time)
+try: 
+    while True:
+        try:
+            voltage = float(input("Введите напряжение в Вольтах: "))
+            number = VoltageToNumber(voltage)
+            NumberToDac(number)
 
-        for i in range(8):
-            GPIO.output(leds[i], dec2bin(num)[i])
-    
+        except ValueError:
+            print("Вы ввели не числою Попробуйте еще раз\n")
+
+finally:
+    GPIO.output(pins,0)
+    GPIO.cleanup()
+
+
