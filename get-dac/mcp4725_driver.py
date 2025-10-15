@@ -1,6 +1,6 @@
 import smbus
 
-dynamic_range = 5.0
+
 
 class MCP4725:
     def __init__(self, dynamic_range, address=0x61, verbose = True):
@@ -12,7 +12,7 @@ class MCP4725:
 
         self.verbose = verbose
         self.dynamic_range = dynamic_range
-    def deinit():
+    def deinit(self):
         self.bus.close()
     def set_number(self, number):
         if not isinstance(number, int):
@@ -28,10 +28,12 @@ class MCP4725:
     def set_voltage(self, voltage):
         if (0>voltage or voltage > 4095):
             print(f"Напряжение выходит за динамический диапазон ЦАП (0.00-{self.dynamic_range:.2f} В)")
-        self.set_number(int((voltage/5)*4095))            
+        self.set_number(int((voltage/5.13)*4095))            
+
+
 if __name__ == "__main__":
     try:
-        dac = MCP4725(dynamic_range)
+        dac = MCP4725(5.13)
         while True:
             try:
                 voltage = float(input("Введите напряжение в вольтах: "))

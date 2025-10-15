@@ -3,7 +3,7 @@ import signal_generator as sg
 import RPi.GPIO as GPIO
 import time
 
-amplitude = 3.2
+amplitude = 5
 signal_frequency = 10
 sampling_frequency = 1000
 
@@ -14,7 +14,7 @@ if __name__ == "__main__":
         dac = r2r.R2R_DAC(gpio_bits, amplitude, True)
         while True:
             sg.wait_for_sampling_period(sampling_frequency)
-            voltage = sg.get_sin_wave_amplitude(signal_frequency,time.time())
-            GPIO.output(gpio_bits, dac.number_to_dac(abs(int(voltage*255))))
+            voltage = sg.get_sin_wave_amplitude(signal_frequency,time.time(),amplitude)
+            GPIO.output(gpio_bits, dac.number_to_dac(abs(int(voltage*255 / amplitude))))
     finally:
         dac.deinit()
