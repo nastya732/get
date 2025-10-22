@@ -42,3 +42,19 @@ if __name__ == "__main__":
                 print("Вы ввели не число. Попробуйте ещё раз\n")
     finally:
         dac.deinit()
+# if __name__ == "__main__":
+#     adc = None
+#     try:
+#         # Создаем АЦП
+#         adc = R2R_ADC(dynamic_range=3.3, verbose=True)
+        
+#         # ОДНО измерение - достаточно для проверки работы
+#         voltage = adc.get_sc_voltage()
+#         print(f="Финальное измеренное напряжение: {voltage:.3f} В")
+#         print("АЦП успешно отработал! Программа завершена.")
+        
+#     except Exception as e:
+#         print(f"Ошибка: {e}")
+#     finally:
+#         if adc:
+#             adc.__del__()
