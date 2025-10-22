@@ -95,28 +95,41 @@ class R2R_ADC:
         return voltage
 
 
-# Основной охранник
-if __name__ == "__main__":
-    try:
-        # Создаем объект АЦП (динамический диапазон нужно измерить мультиметром!)
-        # Например, для 3.3В питания: dynamic_range=3.3
-        adc = R2R_ADC(dynamic_range=3.3, verbose=True)
+# # Основной охранник
+# if __name__ == "__main__":
+#     try:
+#         # Создаем объект АЦП (динамический диапазон нужно измерить мультиметром!)
+#         # Например, для 1.357В питания: dynamic_range=1.357
+#         adc = R2R_ADC(dynamic_range=1.357, verbose=True)
         
-        # Бесконечный цикл измерений
-        while True:
-            # Читаем напряжение
-            voltage = adc.get_sc_voltage()
+#         # Бесконечный цикл измерений
+#         while True:
+#             # Читаем напряжение
+#             voltage = adc.get_sc_voltage()
             
-            # Печатаем в терминал
-            print(f"Измеренное напряжение: {voltage:.3f} В")
+#             # Печатаем в терминал
+#             print(f"Измеренное напряжение: {voltage:.3f} В")
             
-            # Пауза между измерениями
-            time.sleep(1)
-            
-    except KeyboardInterrupt:
-        print("\nПрограмма прервана пользователем")
+#             # Пауза между измерениями
+#             time.sleep(1)
+#     finally:
+#         # Вызываем деструктор
+#         if 'adc' in locals():
+#             adc.__del__()
+#         print("Программа завершена, GPIO очищен")
+if __name__ == "__main__":
+    adc = None
+    try:
+        # Создаем АЦП
+        adc = R2R_ADC(dynamic_range=1.357, verbose=True)
+        
+        # ОДНО измерение - достаточно для проверки работы
+        voltage = adc.get_sc_voltage()
+        print(f="Финальное измеренное напряжение: {voltage:.3f} В")
+        print("АЦП успешно отработал! Программа завершена.")
+        
+    except Exception as e:
+        print(f"Ошибка: {e}")
     finally:
-        # Вызываем деструктор
-        if 'adc' in locals():
+        if adc:
             adc.__del__()
-        print("Программа завершена, GPIO очищен")
