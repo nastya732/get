@@ -143,6 +143,7 @@
 #         if 'adc' in locals():
 #             adc.__del__()
 #         print("GPIO очищен, программа завершена.")import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import r2r_dac 
 from time import sleep
 
