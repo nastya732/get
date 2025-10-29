@@ -1,16 +1,18 @@
+# r2r-sc.py
 import time
 from r2r_adc import R2R_ADC
-from adc_plot import plot_voltage_vs_time
+from adc_plot import plot_voltage_vs_time, plot_sampling_period_hist
 
 def main():
     adc = R2R_ADC(dynamic_range=3.3, verbose=False)
     voltage_values = []
     time_values = []
-    duration = 3.0
+    duration = 10.0
+    measure_interval = 0.02
     
     try:
         start_time = time.time()
-        print(f"Измеряю напряжение {duration} секунд...")
+        print(f"Измеряю {duration} секунд с интервалом {measure_interval}с")
         print("Крутите потенциометр во время измерений!")
         
         while (time.time() - start_time) < duration:
@@ -20,15 +22,19 @@ def main():
             voltage_values.append(current_voltage)
             time_values.append(current_time)
             
-            print(f"Время: {current_time:.1f}с, Напряжение: {current_voltage:.2f}В")
-            time.sleep(0.1)
+            # Реже выводим в консоль чтобы не засорять
+            if len(voltage_values) % 10 == 0:
+                print(f"Измерено точек: {len(voltage_values)}")
+            
+            time.sleep(measure_interval)
         
-        print("Измерения завершены! Строю график...")
+        print(f"Измерения завершены! Всего точек: {len(voltage_values)}")
         
-        # Построение графика
+        # Отображение графика напряжения
         plot_voltage_vs_time(time_values, voltage_values, adc.dynamic_range)
         
-        print("Если не видите график, проверьте файл 'voltage_plot.png' в папке!")
+        # Отображение гистограммы периодов измерений
+        plot_sampling_period_hist(time_values)
         
     except Exception as e:
         print(f"Ошибка: {e}")
